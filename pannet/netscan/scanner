@@ -1,0 +1,33 @@
+#!/bin/bash
+
+target="/tmp/$1.trgt"
+target_tmp="/tmp/$1.tmp"
+
+display_usage() {
+  echo "Example usage: $0 127.0.0.1"
+  echo "=============: $0 127.0.0.1,2"
+}
+
+if [[ $# -eq 0 ]] ; then
+    display_usage
+    exit 0
+fi
+
+# check if we did scan first time
+if [ ! -f "$target" ]
+then
+  echo "*Target - $1: Full scan results:*" > $target
+  nmap --open $1 -oG - | grep -v "Status" | grep "Host" |  awk '{for (i=1;i<=NF;i++) { if ($i ~ /\/\/\//) { print $1" "$2,$i; }  } print ""  }' | sed 's/,//g' >> $target
+  cat $target
+else
+  echo "*Target - $1: Full scan results:*" > $target_tmp
+  nmap --open $1 -oG - | grep -v "Status" | grep "Host" |  awk '{for (i=1;i<=NF;i++) { if ($i ~ /\/\/\//) { print $1" "$2,$i; }  } print ""  }' | sed 's/,//g' >> $target_tmp
+ DIFF=$(diff $target $target_tmp)
+ if [ "$DIFF" != "" ] 
+ then
+   cat $target_tmp
+   cat $target_tmp > $target
+ else
+   echo "*Target: - $1: No new records found in the last scan.*"
+ fi
+fi
