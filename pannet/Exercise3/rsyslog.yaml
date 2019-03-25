@@ -1,0 +1,11 @@
+--- # set up rsyslog on related hosts 
+- hosts: rsyslog-m
+  become: yes
+  roles:
+  - { role: rsyslog, type: master } 
+
+
+- hosts: rsyslog-clients
+  become: yes
+  roles:
+  - { role: rsyslog, type: client } 

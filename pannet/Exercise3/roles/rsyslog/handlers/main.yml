@@ -1,0 +1,6 @@
+---
+- name: restart rsyslog
+  tags: 
+    - rsyslog
+    - configuration
+  service: name=rsyslog state=restarted

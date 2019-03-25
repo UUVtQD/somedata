@@ -1,0 +1,15 @@
+---
+- name: install packages for CentOS
+  tags:
+    - rsyslog
+    - packages
+  package:
+    name: rsyslog
+    state: latest
+  become: yes
+
+
+- name: Setup rsyslog
+  template: src=rsyslog.conf.j2 dest=/etc/rsyslog.conf owner=root mode=644
+  notify:
+    - restart rsyslog
